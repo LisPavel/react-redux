@@ -1,8 +1,14 @@
 import React from 'react';
 import ReactDOM from "react-dom";
+import { compose, pipe } from "lodash/fp";
 
 const App = () => {
-    return <h1>REDUX</h1>;
+    const x = 2;
+    const double = (n) => n * 2;
+    const square = (n) => n * n;
+    const half = (n) => n / 2;
+    const mathCalculate = pipe(double, square, half);
+    return <h1>REDUX {mathCalculate(x)}</h1>;
 };
 
 ReactDOM.render(
