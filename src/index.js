@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 // import { compose, pipe } from "lodash/fp";
 
@@ -19,31 +19,43 @@ function taskReducer(state, action) {
 
 const createStore = (reducer, initialState) => {
     let state = initialState;
+    let listeners = [];
     const getState = () => {
         return state;
     };
     const dispatch = (action) => {
         console.log(action);
         state = reducer(state, action);
+        for (const listener of listeners) {
+            listener();
+        }
     };
-    return { getState, dispatch };
+    const subscribe = (listener) => {
+        const idx = listeners.length;
+        listeners.push(listener);
+        return () => delete listeners[idx];
+    };
+    return { getState, dispatch, subscribe };
 };
 
-const App = () => {
-    const store = createStore(taskReducer, [
-        { id: 1, description: "task 1", completed: false },
-        { id: 2, description: "task 2", completed: false },
-    ]);
-    console.log(store.getState());
+const store = createStore(taskReducer, [
+    { id: 1, description: "task 1", completed: false },
+    { id: 2, description: "task 2", completed: false },
+]);
 
-    const state = store.getState();
+const App = () => {
+    const [state, setState] = useState(store.getState());
+
+    useEffect(() => {
+        return store.subscribe(() => setState(store.getState()));
+    }, []);
 
     const completeTask = (taskId) => {
         store.dispatch({
             type: "task/completed",
             payload: { id: taskId },
         });
-        console.log(store.getState());
+        // console.log(store.getState());
     };
     // const x = 2;
     // const double = (n) => n * 2;
