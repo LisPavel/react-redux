@@ -7,7 +7,8 @@ const App = () => {
     const double = (n) => n * 2;
     const square = (n) => n * n;
     const half = (n) => n / 2;
-    const mathCalculate = pipe(double, square, half);
+    const divide = (n2) => (n1) => n1 / n2;
+    const mathCalculate = pipe(double, square, half, divide(3));
     return <h1>REDUX {mathCalculate(x)}</h1>;
 };
 
