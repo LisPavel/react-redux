@@ -1,47 +1,16 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import { createStore } from "./store/createStore";
+import { taskReducer } from "./store/taskReducer";
+import * as actions from "./store/actionTypes";
+
+const initialState = [
+    { id: 1, title: "task 1", completed: false },
+    { id: 2, title: "task 2", completed: false },
+];
 // import { compose, pipe } from "lodash/fp";
 
-function taskReducer(state, action) {
-    switch (action.type) {
-        case "task/completed":
-            const newArr = [...state];
-            const index = newArr.findIndex(
-                (task) => task.id === action.payload.id,
-            );
-            newArr[index].completed = true;
-            return newArr;
-
-        default:
-            return state;
-    }
-}
-
-const createStore = (reducer, initialState) => {
-    let state = initialState;
-    let listeners = [];
-    const getState = () => {
-        return state;
-    };
-    const dispatch = (action) => {
-        console.log(action);
-        state = reducer(state, action);
-        for (const listener of listeners) {
-            listener();
-        }
-    };
-    const subscribe = (listener) => {
-        const idx = listeners.length;
-        listeners.push(listener);
-        return () => delete listeners[idx];
-    };
-    return { getState, dispatch, subscribe };
-};
-
-const store = createStore(taskReducer, [
-    { id: 1, description: "task 1", completed: false },
-    { id: 2, description: "task 2", completed: false },
-]);
+const store = createStore(taskReducer, initialState);
 
 const App = () => {
     const [state, setState] = useState(store.getState());
@@ -52,25 +21,26 @@ const App = () => {
 
     const completeTask = (taskId) => {
         store.dispatch({
-            type: "task/completed",
-            payload: { id: taskId },
+            type: actions.taskUpdated,
+            payload: { id: taskId, completed: true },
         });
-        // console.log(store.getState());
     };
-    // const x = 2;
-    // const double = (n) => n * 2;
-    // const square = (n) => n * n;
-    // const half = (n) => n / 2;
-    // const divide = (n2) => (n1) => n1 / n2;
-    // const mathCalculate = pipe(double, square, half, divide(3));
+
+    const changeTitle = (taskId) => {
+        store.dispatch({
+            type: actions.taskUpdated,
+            payload: { id: taskId, title: `new task ${taskId}` },
+        });
+    };
     return (
         <>
             <h1>REDUX</h1>
             {state.map((t) => (
                 <li key={t.id}>
-                    <p>{t.description}</p>
+                    <p>{t.title}</p>
                     <input checked={t.completed} type="checkbox" />
                     <button onClick={() => completeTask(t.id)}>complete</button>
+                    <button onClick={() => changeTitle(t.id)}>change</button>
                     <hr />
                 </li>
             ))}
