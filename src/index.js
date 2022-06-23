@@ -21,6 +21,10 @@ const App = () => {
     const changeTitle = (taskId) => {
         store.dispatch(actions.titleChanged(taskId));
     };
+
+    const deleteTask = (taskId) => {
+        store.dispatch(actions.taskDeleted(taskId));
+    };
     return (
         <>
             <h1>REDUX</h1>
@@ -30,6 +34,7 @@ const App = () => {
                     <input checked={t.completed} type="checkbox" />
                     <button onClick={() => completeTask(t.id)}>complete</button>
                     <button onClick={() => changeTitle(t.id)}>change</button>
+                    <button onClick={() => deleteTask(t.id)}>delete</button>
                     <hr />
                 </li>
             ))}
