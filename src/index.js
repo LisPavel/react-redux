@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import { createStore } from "./store/createStore";
-import { taskReducer } from "./store/taskReducer";
 import * as actions from "./store/actionTypes";
+import { initializeState } from "./store/store";
 
-const initialState = [
-    { id: 1, title: "task 1", completed: false },
-    { id: 2, title: "task 2", completed: false },
-];
+
 // import { compose, pipe } from "lodash/fp";
 
-const store = createStore(taskReducer, initialState);
+const store = initializeState();
 
 const App = () => {
     const [state, setState] = useState(store.getState());
