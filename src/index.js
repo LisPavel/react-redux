@@ -12,9 +12,9 @@ import {
 const store = createStore();
 
 const App = () => {
-    const state = useSelector((state) => state.entities);
-    const error = useSelector((state) => state.error);
-    const isLoading = useSelector((state) => state.isLoading);
+    const state = useSelector((state) => state.tasks.entities);
+    const errors = useSelector((state) => state.errors.entities);
+    const isLoading = useSelector((state) => state.tasks.isLoading);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTasks());
@@ -30,8 +30,8 @@ const App = () => {
     if (isLoading) {
         return <h1>Loading...</h1>;
     }
-    if (error) {
-        return <h3>{error}</h3>;
+    if (errors.length > 0) {
+        return <h3>{errors.join(", ")}</h3>;
     }
 
     return (
