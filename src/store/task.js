@@ -1,49 +1,63 @@
 import { createSlice, createAction } from "@reduxjs/toolkit";
 import todoService from "../services/todoService";
 
-const initialState = [
-    { id: 1, title: "task 1", completed: false },
-    { id: 2, title: "task 2", completed: false },
-];
+const initialState = { entities: [], isLoading: true, error: null };
 
 const taskSlice = createSlice({
     name: "task",
     initialState,
     reducers: {
         update(state, action) {
-            const index = state.findIndex((t) => t.id === action.payload.id);
-            state[index] = { ...state[index], ...action.payload };
+            const index = state.entities.findIndex(
+                (t) => t.id === action.payload.id,
+            );
+            state.entities[index] = {
+                ...state.entities[index],
+                ...action.payload,
+            };
         },
 
         remove(state, action) {
-            return state.filter((t) => t.id !== action.payload.id);
+            state.entities = state.entities.filter(
+                (t) => t.id !== action.payload.id,
+            );
         },
 
         received(state, action) {
-            return action.payload;
+            state.entities = action.payload;
+            state.isLoading = false;
+        },
+
+        requested(state) {
+            state.isLoading = true;
+        },
+
+        requestFailed(state, action) {
+            state.error = action.payload;
+            state.isLoading = false;
         },
     },
 });
 
 const {
-    actions: { update, remove, received },
+    actions: { update, remove, received, requestFailed, requested },
     reducer,
 } = taskSlice;
 
-const taskRequested = createAction("task/requested");
-const taskRequestFailed = createAction("task/requestFiled");
+// const taskRequested = createAction("task/requested");
+// const taskRequestFailed = createAction("task/requestFiled");
 
 export const completeTask = (id) => (dispatch) => {
     dispatch(update({ id, completed: true }));
 };
 
 export const getTasks = () => async (dispatch) => {
-    dispatch(taskRequested());
+    dispatch(requested());
     try {
         const data = await todoService.fetch();
         dispatch(received(data));
     } catch (error) {
-        dispatch(taskRequestFailed(error.message ?? error.error));
+        dispatch(requestFailed(error.message ?? error.error));
         // console.error(error);
     }
 };

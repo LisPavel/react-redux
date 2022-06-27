@@ -12,7 +12,9 @@ import {
 const store = createStore();
 
 const App = () => {
-    const state = useSelector((state) => state);
+    const state = useSelector((state) => state.entities);
+    const error = useSelector((state) => state.error);
+    const isLoading = useSelector((state) => state.isLoading);
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(getTasks());
@@ -25,6 +27,12 @@ const App = () => {
     const deleteTask = (taskId) => {
         dispatch(taskDeleted(taskId));
     };
+    if (isLoading) {
+        return <h1>Loading...</h1>;
+    }
+    if (error) {
+        return <h3>{error}</h3>;
+    }
 
     return (
         <>
