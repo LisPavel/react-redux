@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
-import configureStore from "./store/store";
+import createStore from "./store/store";
 import {
     completeTask,
     getTasks,
@@ -8,7 +8,7 @@ import {
     titleChanged,
 } from "./store/task";
 
-const store = configureStore();
+const store = createStore();
 
 const App = () => {
     const [state, setState] = useState(store.getState());
