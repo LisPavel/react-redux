@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+import { Provider, useSelector, useDispatch } from "react-redux";
 import createStore from "./store/store";
 import {
     completeTask,
@@ -11,19 +12,18 @@ import {
 const store = createStore();
 
 const App = () => {
-    const [state, setState] = useState(store.getState());
-
+    const state = useSelector((state) => state);
+    const dispatch = useDispatch();
     useEffect(() => {
-        store.dispatch(getTasks());
-        return store.subscribe(() => setState(store.getState()));
+        dispatch(getTasks());
     }, []);
 
     const changeTitle = (taskId) => {
-        store.dispatch(titleChanged(taskId));
+        dispatch(titleChanged(taskId));
     };
 
     const deleteTask = (taskId) => {
-        store.dispatch(taskDeleted(taskId));
+        dispatch(taskDeleted(taskId));
     };
 
     return (
@@ -33,7 +33,7 @@ const App = () => {
                 <li key={t.id}>
                     <p>{t.title}</p>
                     <input checked={t.completed} type="checkbox" />
-                    <button onClick={() => store.dispatch(completeTask(t.id))}>
+                    <button onClick={() => dispatch(completeTask(t.id))}>
                         complete
                     </button>
                     <button onClick={() => changeTitle(t.id)}>change</button>
@@ -47,7 +47,9 @@ const App = () => {
 
 ReactDOM.render(
     <React.StrictMode>
-        <App />
+        <Provider store={store}>
+            <App />
+        </Provider>
     </React.StrictMode>,
     document.getElementById("root"),
 );
