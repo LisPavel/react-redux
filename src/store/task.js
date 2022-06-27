@@ -51,7 +51,7 @@ export const completeTask = (id) => (dispatch) => {
     dispatch(update({ id, completed: true }));
 };
 
-export const getTasks = () => async (dispatch) => {
+export const loadTasks = () => async (dispatch) => {
     dispatch(requested());
     try {
         const data = await todoService.fetch();
@@ -69,6 +69,13 @@ export const titleChanged = (id) => {
 
 export const taskDeleted = (id) => {
     return remove({ id });
+};
+
+export const getTasks = () => (state) => {
+    return state.tasks.entities;
+};
+export const getTasksLoadingStatus = () => (state) => {
+    return state.tasks.isLoading;
 };
 
 export default reducer;

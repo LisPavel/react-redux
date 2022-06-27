@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
 import { Provider, useSelector, useDispatch } from "react-redux";
+import { getErrors } from "./store/errors";
 import createStore from "./store/store";
 import {
     completeTask,
+    getTasksLoadingStatus,
     getTasks,
+    loadTasks,
     taskDeleted,
     titleChanged,
 } from "./store/task";
@@ -12,12 +15,12 @@ import {
 const store = createStore();
 
 const App = () => {
-    const state = useSelector((state) => state.tasks.entities);
-    const errors = useSelector((state) => state.errors.entities);
-    const isLoading = useSelector((state) => state.tasks.isLoading);
+    const state = useSelector(getTasks());
+    const errors = useSelector(getErrors());
+    const isLoading = useSelector(getTasksLoadingStatus());
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(getTasks());
+        dispatch(loadTasks());
     }, []);
 
     const changeTitle = (taskId) => {
