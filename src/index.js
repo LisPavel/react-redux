@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import configureStore from "./store/store";
-import { taskCompleted, taskDeleted, titleChanged } from "./store/task";
-
-// import { compose, pipe } from "lodash/fp";
+import { completeTask, taskDeleted, titleChanged } from "./store/task";
 
 const store = configureStore();
 
@@ -13,10 +11,6 @@ const App = () => {
     useEffect(() => {
         return store.subscribe(() => setState(store.getState()));
     }, []);
-
-    const completeTask = (taskId) => {
-        store.dispatch(taskCompleted(taskId));
-    };
 
     const changeTitle = (taskId) => {
         store.dispatch(titleChanged(taskId));
@@ -33,7 +27,9 @@ const App = () => {
                 <li key={t.id}>
                     <p>{t.title}</p>
                     <input checked={t.completed} type="checkbox" />
-                    <button onClick={() => completeTask(t.id)}>complete</button>
+                    <button onClick={() => store.dispatch(completeTask(t.id))}>
+                        complete
+                    </button>
                     <button onClick={() => changeTitle(t.id)}>change</button>
                     <button onClick={() => deleteTask(t.id)}>delete</button>
                     <hr />

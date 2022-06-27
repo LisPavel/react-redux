@@ -25,8 +25,8 @@ const {
     reducer,
 } = taskSlice;
 
-export const taskCompleted = (id) => {
-    return update({ id, completed: true });
+export const completeTask = (id) => (dispatch) => {
+    dispatch(update({ id, completed: true }));
 };
 
 export const titleChanged = (id) => {
