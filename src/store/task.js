@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import todoService from "../services/todoService";
 import { setError } from "./errors";
 
-const initialState = { entities: [], isLoading: true };
+const initialState = { entities: [], isLoading: true, inProgress: false };
 
 const taskSlice = createSlice({
     name: "task",
@@ -24,6 +24,11 @@ const taskSlice = createSlice({
             );
         },
 
+        create(state, action) {
+            state.entities.push(action.payload);
+            state.inProgress = false;
+        },
+
         received(state, action) {
             state.entities = action.payload;
             state.isLoading = false;
@@ -35,12 +40,25 @@ const taskSlice = createSlice({
 
         requestFailed(state) {
             state.isLoading = false;
+            state.inProgress = false;
+        },
+
+        pending(state) {
+            state.inProgress = true;
         },
     },
 });
 
 const {
-    actions: { update, remove, received, requestFailed, requested },
+    actions: {
+        update,
+        remove,
+        received,
+        requestFailed,
+        requested,
+        create,
+        pending,
+    },
     reducer,
 } = taskSlice;
 
@@ -71,11 +89,29 @@ export const taskDeleted = (id) => {
     return remove({ id });
 };
 
+export const taskCreated = () => async (dispatch) => {
+    dispatch(pending());
+    try {
+        const data = await todoService.create({
+            userId: 1,
+            title: "delectus aut autem " + Date.now(),
+            completed: false,
+        });
+        dispatch(create(data));
+    } catch (error) {
+        dispatch(requestFailed());
+        dispatch(setError(error.message ?? error.error));
+    }
+};
+
 export const getTasks = () => (state) => {
     return state.tasks.entities;
 };
 export const getTasksLoadingStatus = () => (state) => {
     return state.tasks.isLoading;
+};
+export const getTasksProgressStatus = () => (state) => {
+    return state.tasks.inProgress;
 };
 
 export default reducer;

@@ -10,6 +10,8 @@ import {
     loadTasks,
     taskDeleted,
     titleChanged,
+    taskCreated,
+    getTasksProgressStatus,
 } from "./store/task";
 
 const store = createStore();
@@ -18,10 +20,11 @@ const App = () => {
     const state = useSelector(getTasks());
     const errors = useSelector(getErrors());
     const isLoading = useSelector(getTasksLoadingStatus());
+    const inProgress = useSelector(getTasksProgressStatus());
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(loadTasks());
-    }, []);
+    }, [dispatch]);
 
     const changeTitle = (taskId) => {
         dispatch(titleChanged(taskId));
@@ -40,18 +43,25 @@ const App = () => {
     return (
         <>
             <h1>REDUX</h1>
-            {state.map((t) => (
-                <li key={t.id}>
-                    <p>{t.title}</p>
-                    <input checked={t.completed} type="checkbox" />
-                    <button onClick={() => dispatch(completeTask(t.id))}>
-                        complete
-                    </button>
-                    <button onClick={() => changeTitle(t.id)}>change</button>
-                    <button onClick={() => deleteTask(t.id)}>delete</button>
-                    <hr />
-                </li>
-            ))}
+            <button onClick={() => dispatch(taskCreated())}>
+                {!inProgress ? "create task" : "creating"}
+            </button>
+            <ul>
+                {state.map((t) => (
+                    <li key={t.id}>
+                        <p>{t.title}</p>
+                        <input checked={t.completed} type="checkbox" />
+                        <button onClick={() => dispatch(completeTask(t.id))}>
+                            complete
+                        </button>
+                        <button onClick={() => changeTitle(t.id)}>
+                            change
+                        </button>
+                        <button onClick={() => deleteTask(t.id)}>delete</button>
+                        <hr />
+                    </li>
+                ))}
+            </ul>
         </>
     );
 };

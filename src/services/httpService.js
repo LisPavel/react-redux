@@ -6,6 +6,7 @@ const instance = axios.create({
 
 const httpService = {
     get: instance.get,
+    post: instance.post,
 };
 
 export default httpService;
